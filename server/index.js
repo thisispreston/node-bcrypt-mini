@@ -21,15 +21,16 @@ app.use(
   })
 );
 
-const checkUser = (req, res, next) => {
-  if (req.session.user) {
-    res.status(200).send(req.session.user)
+function checkUser(req, res, next) {
+  console.log('hit checkUser')
+  if(req.session.user) {
+    res.status(200).send({message: 'A user is currently logged in. Logout if you wish to sign in to another account', user: req.session.user})
   } else {
     next()
   }
 }
 
-app.post('/auth/signup', async(req, res) => {
+app.post('/auth/signup', checkUser, async(req, res) => {
   let { email, password } = req.body
   let db = req.app.get('db')
 
@@ -49,7 +50,7 @@ app.post('/auth/signup', async(req, res) => {
   res.status(200).send(req.session.user)
 })
 
-app.post('/auth/login', async(req, res) => {
+app.post('/auth/login', checkUser, async(req, res) => {
   let { email, password } = req.body
   let bd = req.app.get('db')
 
@@ -74,7 +75,7 @@ app.post('/auth/login', async(req, res) => {
 
 app.delete('/auth/logout', (req, res) => {
   req.session.destroy()
-  res.status(200)
+  res.sendStatus(200)
 })
 
 massive(CONNECTION_STRING).then(db => {

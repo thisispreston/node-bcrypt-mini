@@ -21,6 +21,8 @@ class App extends Component {
       email: '',
       password: '',
     })
+
+    if(result.data.message) alert(result.data.message)
   }
 
   async signup() {
@@ -32,13 +34,20 @@ class App extends Component {
       email: '',
       password: '',
     })
+
+    console.log('hit signup', result)
+    if(result.data.message) alert(result.data.message)
   }
 
-  logout() {
-    axios.delete('/auth/logout')
+  async logout() {
+    let result = await axios.delete('/auth/logout')
     this.setState({
       loggedInUser: {},
     })
+
+    if(result.status == 200) {
+      alert('You have successfully logged out')
+    }
   }
 
   render() {
